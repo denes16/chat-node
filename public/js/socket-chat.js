@@ -20,6 +20,25 @@ socket.on('connect', function() {
     socket.emit('entrarChat',usuario,function(resp)
     {
         console.log('Usuarios conectados',resp);
+        renderUsuarios(resp.usuarios);
+        toastr.options = {
+            "closeButton": false,
+            "debug": false,
+            "newestOnTop": false,
+            "progressBar": false,
+            "positionClass": "toast-top-right",
+            "preventDuplicates": false,
+            "onclick": null,
+            "showDuration": "300",
+            "hideDuration": "300",
+            "timeOut": "2000",
+            "extendedTimeOut": "0",
+            "showEasing": "swing",
+            "hideEasing": "linear",
+            "showMethod": "fadeIn",
+            "hideMethod": "fadeOut"
+        };
+        toastr.success('Conectado');
     });
 
 });
@@ -28,27 +47,39 @@ socket.on('connect', function() {
 socket.on('disconnect', function() {
 
     console.log('Perdimos conexión con el servidor');
+        toastr.options = {
+            "closeButton": false,
+            "debug": false,
+            "newestOnTop": false,
+            "progressBar": false,
+            "positionClass": "toast-top-right",
+            "preventDuplicates": false,
+            "onclick": null,
+            "showDuration": "300",
+            "hideDuration": "300",
+            "timeOut": "2000",
+            "extendedTimeOut": "0",
+            "showEasing": "swing",
+            "hideEasing": "linear",
+            "showMethod": "fadeIn",
+            "hideMethod": "fadeOut"
+        };
+        toastr.danger('Perdimos conexión con el servidor');
 
 });
 
 
-// Enviar msg
-// socket.emit('crearMensaje', {
-//     msg: 'Hola Mundo'
-// }, function(resp) {
-//     console.log('respuesta server: ', resp);
-// });
-
 // Escuchar información
 socket.on('crearMsg', function(d) {
 
-    console.log('Servidor:', d);
+    renderMsg(d);
 
 });
 // Escuchar cambio de usuarios
 socket.on('listaPersonas', function(d) {
 
     console.log('Servidor:', d);
+    renderUsuarios(d);
 
 });
 
@@ -56,4 +87,3 @@ socket.on('listaPersonas', function(d) {
 socket.on('msgPrivado',function(d){
     console.log('Mensaje privado',d);
 });
-

@@ -20,6 +20,7 @@ io.on('connection', (client) => {
         let users = usuarios.agregarPersona(client.id, usuario.nombre, usuario.sala);
         // Enviar lista usuarios
         client.broadcast.to(usuario.sala).emit('listaPersonas', usuarios.getPersonasSala(usuario.sala));
+        client.broadcast.to(usuario.sala).emit('crearMsg', crearMsg('Admin',`${ usuario.nombre } entró`));
         return callback({
             success: true,
             usuarios: usuarios.getPersonasSala(usuario.sala)
@@ -28,15 +29,16 @@ io.on('connection', (client) => {
     // Desconexión
     client.on('disconnect', () => {
         let personaBorrada = usuarios.delPersona(client.id);
-        client.broadcast.to(personaBorrada.sala).emit('crearMsg', crearMsg('Admin', `${personaBorrada.nombre} se ha desconectado`));
+        client.broadcast.to(personaBorrada.sala).emit('crearMsg', crearMsg('Admin', `${personaBorrada.nombre} se unió`));
         client.broadcast.to(personaBorrada.sala).emit('listaPersonas', usuarios.getPersonasSala(personaBorrada.sala));
     });
 
-    // Recibir mensaje y enviarlo a todos
-    client.on('crearMsg', (d) => {
+    // Recibir mensaje y enviarlo a todos en la sala
+    client.on('crearMsg', (d,callback) => {
         let p = usuarios.getPersona(client.id);
         let msg = crearMsg(p.nombre, d.msg);
         client.broadcast.to(p.sala).emit('crearMsg', msg);
+        callback(msg);
     });
 
     // Recibir mensaje privado
